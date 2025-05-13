@@ -132,8 +132,8 @@ app.get('/nosql-injection', async (req, res) => {
 	res.send(`<h1>Hello ${username}</h1>`);
 });
 
-app.get('/signup', (req, res) => {
-	res.render('signup');
+app.get('/signUp', (req, res) => {
+	res.render('signUp');
 });
 
 //When signing up we use joi for proper inputs and hash the password using bcrypt
