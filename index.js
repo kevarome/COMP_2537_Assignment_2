@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const Joi = require("joi");
+const { ObjectId } = require('mongodb');
 
 //rounds for hashing
 const saltRounds = 12;
@@ -52,6 +53,42 @@ app.use(session({
 	saveUninitialized: false,
 	resave: true
 }));
+
+//Session Authentication middleware
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+//END of Session Authentication
+
+//Admin Authorization middleware
+function isAdmin(req) {
+	if (req.session.user_type === 'admin') {
+		return true;
+	}
+	return false;
+}
+
+function adminAuthorization(req, res, next) {
+	if (!isAdmin(req)) {
+		res.status(403);
+		res.render("errorMessage", { error: "Not Authorized" });
+		return;
+	}
+	next();
+}
+//End of Admin Authorization
+
 
 //Homepage which has the signup and login options. 
 //If logged in, it redirects to members page
@@ -127,7 +164,7 @@ app.post('/signupSubmit', async (req, res) => {
 
 		var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-		await userCollection.insertOne({ username: username, email: email, password: hashedPassword });
+		await userCollection.insertOne({ username: username, email: email, password: hashedPassword, role: "user"});
 
 		req.session.authenticated = true;
 		req.session.username = username;
@@ -157,7 +194,7 @@ app.post('/loginSubmit', async (req, res) => {
 		return;
 	}
 
-	const result = await userCollection.find({ email: email }).project({ username: 1, email: 1, password: 1, _id: 1 }).toArray();
+	const result = await userCollection.find({ email: email }).project({ username: 1, email: 1, password: 1, role: 1, _id: 1 }).toArray();
 
 	if (result.length != 1) {
 		res.send(`<p>Invalid email/password combination</p><a href="/login">Try again</a>`);
@@ -166,6 +203,7 @@ app.post('/loginSubmit', async (req, res) => {
 	if (await bcrypt.compare(password, result[0].password)) {
 		req.session.authenticated = true;
 		req.session.username = result[0].username;
+        req.session.user_type = result[0].role; // Save role in session
 		req.session.cookie.maxAge = expireTime;
 
 		res.redirect('/members');
@@ -189,8 +227,51 @@ app.get('/members', (req, res) => {
 	var img = ['dog1.png', 'dog2.png', 'dog3.png'];
 	var randomImg = img[Math.floor(Math.random() * img.length)];
 
-	res.render('members', { username, randomImg });
+res.render("members", { username, randomImg, user_type: req.session.user_type });
+
 });
+
+//Admins page code
+// Admin page route
+app.get('/admin', sessionValidation, adminAuthorization, async (req, res) => {
+	const result = await userCollection.find()
+		.project({ username: 1, role: 1, _id: 1 }).toArray();
+
+	res.render("admin", { users: result });
+    console.log("Session user_type:", req.session.user_type);
+
+});
+
+
+// Promote user to admin
+app.post('/promote', async (req, res) => {
+    const userId = req.body.userId;
+
+    if (!userId) return res.redirect('/admin');
+
+    await userCollection.updateOne(
+        { _id: new ObjectId(userId) },
+        { $set: { role: 'admin' } }
+    );
+
+    res.redirect('/admin');
+});
+
+// Demote user to regular user
+app.post('/demote', async (req, res) => {
+    const userId = req.body.userId;
+
+    if (!userId) return res.redirect('/admin');
+
+    await userCollection.updateOne(
+        { _id: new ObjectId(userId) },
+        { $set: { role: 'user' } }
+    );
+
+    res.redirect('/admin');
+});
+
+//END OF ADMIN CODE
 
 app.use(express.static(__dirname + "/public"));
 
