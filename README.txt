@@ -1,5 +1,8 @@
 Self-graded Assignment 2 Checklist
 
+Student Name: Kevin Romero
+Student Set: 1B
+
     Criteria	
     ========
 [x]  The /admin page redirects to the /login page if not logged in.
