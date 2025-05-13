@@ -1,25 +1,7 @@
 <%- include("templates/header") %>
-
-<div class="container mt-4">
-    <h3>Users</h3>
-
-    <% users.forEach(user => { %>
-        <div class="row align-items-center mb-3">
-            <div class="col-md-3">
-                <strong><%= user.username %></strong> <span class="text-muted">(<%= user.role %>)</span>
-            </div>
-            <div class="col-md-9">
-                <form action="/promote" method="post" style="display:inline;">
-                    <input type="hidden" name="userId" value="<%= user._id %>">
-                    <button class="btn btn-danger me-2" type="submit">Promote to Admin</button>
-                </form>
-                <form action="/demote" method="post" style="display:inline;">
-                    <input type="hidden" name="userId" value="<%= user._id %>">
-                    <button class="btn btn-success" type="submit">Demote to User</button>
-                </form>
-            </div>
-        </div>
-    <% }) %>
-</div>
-
+    <div class="container mt-4">
+        <h1 class="mb-3">Administration</h1>
+         <hr style="border: 1px solid black;">
+        <%- include("templates/users", { users: users }) %>
+    </div>
 <%- include("templates/footer") %>

@@ -1,25 +1,27 @@
 <%- include("templates/header") %>
-<body>
-    <p>Hello, <%= username %>.</p>
-    <br>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm">
-                <img src="/dog1.png" alt="dog1" class="img-fluid" style="max-width: 100%;">
-            </div>
-            <div class="col-sm">
-                <img src="/dog2.png" alt="dog2" class="img-fluid" style="max-width: 100%;">
-            </div>
-            <div class="col-sm">
-                <img src="/dog3.png" alt="dog3" class="img-fluid" style="max-width: 100%;">
-            </div>
-        </div>
+<body class="bg-light">
+  <div class="container mt-5 text-center">
+    <h2 class="mb-4">Welcome, <%= username %>!</h2>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <img src="/dog1.png" alt="dog1" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-4">
+        <img src="/dog2.png" alt="dog2" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-4">
+        <img src="/dog3.png" alt="dog3" class="img-fluid rounded shadow">
+      </div>
     </div>
 
-    <br><br>
-    <form action="/logout" method="get">
-        <button type="submit">Sign out</button>
-    </form>
+    <div class="mt-5">
+      <form action="/logout" method="get">
+        <button type="submit" class="btn btn-outline-danger">Sign Out</button>
+      </form>
+    </div>
+  </div>
 </body>
+
 <%- include("templates/footer") %>

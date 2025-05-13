@@ -249,10 +249,7 @@ app.post('/promote', async (req, res) => {
 
     if (!userId) return res.redirect('/admin');
 
-    await userCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { role: 'admin' } }
-    );
+    await userCollection.updateOne({ _id: new ObjectId(userId) },{ $set: { role: 'admin' } });
 
     res.redirect('/admin');
 });
@@ -263,9 +260,7 @@ app.post('/demote', async (req, res) => {
 
     if (!userId) return res.redirect('/admin');
 
-    await userCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { role: 'user' } }
+    await userCollection.updateOne({ _id: new ObjectId(userId) },{ $set: { role: 'user' } }
     );
 
     res.redirect('/admin');
