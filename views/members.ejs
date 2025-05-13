@@ -2,7 +2,21 @@
 <body>
     <p>Hello, <%= username %>.</p>
     <br>
-    <img src="/<%= randomImg %>" alt="randomImg" style="max-width:250px;">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <img src="/dog1.png" alt="dog1" class="img-fluid" style="max-width: 100%;">
+            </div>
+            <div class="col-sm">
+                <img src="/dog2.png" alt="dog2" class="img-fluid" style="max-width: 100%;">
+            </div>
+            <div class="col-sm">
+                <img src="/dog3.png" alt="dog3" class="img-fluid" style="max-width: 100%;">
+            </div>
+        </div>
+    </div>
+
     <br><br>
     <form action="/logout" method="get">
         <button type="submit">Sign out</button>
