@@ -143,11 +143,11 @@ app.post('/signupSubmit', async (req, res) => {
 	var email = req.body.email;
 
 	if (!username) {
-		res.send(`<p>Name is required.</p><a href="/signup">Try again</a>`);
+		res.send(`<p>Name is required.</p><a href="/signUp">Try again</a>`);
 	} else if (!email) {
-		res.send(`<p>Email is required.</p><a href="/signup">Try again</a>`);
+		res.send(`<p>Email is required.</p><a href="/signUp">Try again</a>`);
 	} else if (!password) {
-		res.send(`<p>Password is required.</p><a href="/signup">Try again</a>`);
+		res.send(`<p>Password is required.</p><a href="/signUp">Try again</a>`);
 	} else {
 		const schema = Joi.object({
 			username: Joi.string().alphanum().max(20).required(),
@@ -158,7 +158,7 @@ app.post('/signupSubmit', async (req, res) => {
 		const validationResult = schema.validate({ username, email, password });
 		if (validationResult.error != null) {
 			console.log(validationResult.error);
-			res.redirect("/signup");
+			res.redirect("/signUp");
 			return;
 		}
 
